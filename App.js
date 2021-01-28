@@ -1,15 +1,16 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Image, View, Text } from 'react-native';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+
+      <Text style={styles.text}>STAY OPEN Tech challenge</Text>
+      <Image source={{uri: 'https://donstevenson.netlify.app/static/media/profile-pic.67418619.jpg'}} style={styles.img} />
+  
     </View>
-  );
-}
+)}
+
 
 const styles = StyleSheet.create({
   container: {
@@ -18,4 +19,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  text: {
+    color: 'darkslateblue',
+    fontSize: 30
+  },
+  img: {
+    width: 100,
+    height: 100,
+    borderRadius: 100 /2,
+  }
 });
