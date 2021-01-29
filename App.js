@@ -25,8 +25,4 @@ const styles = StyleSheet.create({
     padding: 30,
     justifyContent: "flex-start",
   },
-  text: {
-    color: "darkslateblue",
-    fontSize: 16,
-  },
 });
