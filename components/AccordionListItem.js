@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -6,85 +6,70 @@ import {
   TouchableWithoutFeedback,
   Animated,
   Easing,
+  TouchableOpacity,
 } from "react-native";
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons } from "@expo/vector-icons";
 
-export default function AccordionListItem({title, children}) {
+export default function AccordionListItem({ title, children }) {
+  const [missions, setMissions] = useState([]);
   const [open, setOpen] = useState(false);
   const animatedController = useRef(new Animated.Value(0)).current;
   const [bodSectionHeight, setBodySectionHeight] = useState();
 
-  const bodyHeight = animatedController.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, bodSectionHeight],
-  });
-
-  const arrowAngle = animatedController.interpolate({
-    inputRange: [0, 1],
-    outputRange: ["0rad", `${Math.PI}rad`],
-  });
-
-  const toggleListItem = () => {
-    if (open) {
-      Animated.timing(animatedController, {
-        duration: 300,
-        toValue: 0,
-        easing: Easing.bezier(0.4, 0, 0.2, 1),
-      }).start();
-    } else {
-      Animated.timing(animatedController, {
-        duration: 300,
-        toValue: 1,
-        easing: Easing.bezier(0.4, 0, 0.2, 1),
-      }).start();
+  const fetchData = async () => {
+    try {
+      const response = await fetch(`https://api.spacexdata.com/v3/missions/`);
+      const responseJSON = await response.json();
+      // console.log(responseJSON);
+      setMissions(responseJSON);
+      // console.log("missions", missions);
+    } catch (error) {
+      console.log(error);
     }
-    setOpen(!open);
+    // console.log('response:', response)
+    // return response;
   };
 
+  useEffect(() => {
+    fetchData();
+    // console.log({ missions });
+  }, []);
+
+  console.log("missions", missions);
+
   return (
-    <>
-      <TouchableWithoutFeedback onPress={()=> toggleListItem()}>
-        <View style={styles.titleContainer}>
-          <Text>{title}</Text>
-          <Animated.View style={{ transform: [{ rotateZ: arrowAngle }] }}>
-            <MaterialIcons name="keyboard-arrow-down" size={20} color="black" />
-          </Animated.View>
-          <View style={styles.bodyBackground}>{children} </View>
-        </View>
-      </TouchableWithoutFeedback>
-      <Animated.View style={[styles.bodyBackground, { height: bodyHeight }]}>
-        <View
-          style={styles.bodyContainer}
-          onLayout={event =>
-            setBodySectionHeight(event.nativeEvent.layout.height)
-          }>
-          {children}
-        </View>
-      </Animated.View>
-    </>
+    <View style={styles.bodyContainer}>
+      {missions.map(({ mission_name, description }) => {
+        return (
+          <TouchableOpacity
+            key={mission_name}
+            onPress={() => {}}
+            style={styles.cardContainer}
+            activeOpacity={0.9}
+          >
+            <View style={[styles.card, {backgroundColor: "darkblue" }]}>
+              <Text style={[styles.heading, {color: "pink"}]}>{mission_name}</Text>
+            </View>
+          </TouchableOpacity>
+        );
+      })}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  bodyBackground: {
-    backgroundColor: 'lightgrey',
-    overflow: 'hidden',
+  cardContainer: {
+    flexGrow: 1
   },
-  titleContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '1rem',
-    paddingLeft: '1.5rem',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: '#EFEFEF',
+  card: {
+    flexGrow: 1,
+    alignItems: "center",
+    justifyContent: "center"
   },
-  bodyContainer: {
-    padding: '1rem',
-    paddingLeft: '1.5rem',
-    position: 'absolute',
-    bottom: 0,
+  heading: {
+    fontSize: 38,
+    fontWeight: 900,
+    textTransform: "uppercase",
+    letterSpacing: -2,
   },
 });
