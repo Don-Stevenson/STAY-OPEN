@@ -15,21 +15,55 @@ const transitionObj = (
 export default function AccordionListItem({ title, children }) {
   const [currentMissionId, setCurrentMissionId] = useState(null);
   const [missions, setMissions] = useState([]);
+  const [launchPadInfo, setLaunchPadInfo] = useState([]);
+  const [launches, setLaunches] = useState([]);
   const ref = useRef();
 
-  const fetchData = async () => {
+  const fetchMissionData = async () => {
     try {
-      const response = await fetch(`https://api.spacexdata.com/v3/missions/`);
-      const responseJSON = await response.json();
-      setMissions(responseJSON);
+      const missionResponse = await fetch(
+        `https://api.spacexdata.com/v3/missions/`
+      );
+      const missionResponseJSON = await missionResponse.json();
+      setMissions(missionResponseJSON);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchLaunchPadInfo = async () => {
+    try {
+      const launchPadResponse = await fetch(
+        "https://api.spacexdata.com/v3/launchpads"
+      );
+      const launchPadResponseJSON = await launchPadResponse.json();
+      setLaunchPadInfo(launchPadResponseJSON);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchLaunchs = async () => {
+    try {
+      const launchesResponse = await fetch(
+        "https://api.spacexdata.com/v3/launches"
+      );
+      const launchesResponseJSON = await launchesResponse.json();
+      setLaunches(launchesResponseJSON);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    fetchData();
+    fetchMissionData();
+    fetchLaunchPadInfo();
+    fetchLaunchs();
   }, []);
+
+  console.log("MISSIONs are: ", missions);
+  console.log("launch pads are", launchPadInfo);
+  console.log("launches are", launches);
 
   return (
     <Transitioning.View
