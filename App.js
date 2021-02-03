@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View, Text } from "react-native";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 import AccordionListItem from "./components/AccordionListItem";
-
-// useState
-// useEffect to trigger the code the call change state
 
 export default function App() {
   return (
@@ -14,6 +12,7 @@ export default function App() {
       <AccordionListItem title={"List Rocket"}>
         <StatusBar hidden />
       </AccordionListItem>
+      <Footer />
     </View>
   );
 }
