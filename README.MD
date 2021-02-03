@@ -14,4 +14,4 @@
 
 ## To run:
 
-- fork and clone this repo.  Then use *yarn start* to launch and chose the web emulator
+- fork and clone this repo.  Then use *yarn start* to launch and chose the web browser
