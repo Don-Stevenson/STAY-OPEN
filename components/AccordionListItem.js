@@ -2,36 +2,17 @@ import React, { useState, useRef, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { Transition, Transitioning } from "react-native-reanimated";
 
-// animate next seems to be fine according to the docs reanimated on mobile vew
-// setup the animation characteristics
-const transitionObj = (
-  <Transition.Together>
-    <Transition.In type="fade" durationMs={200} />
-    <Transition.Change />
-    <Transition.Out type="fade" durationMs={200} />
-  </Transition.Together>
-);
+
+// map of rockets (obeject with key value pairs), map of missions, launch pads
+// use object look up
+// no nests loops
 
 export default function AccordionListItem({ title, children }) {
   const [currentMissionId, setCurrentMissionId] = useState(null);
-  const [missions, setMissions] = useState([]);
   const [launchPadInfo, setLaunchPadInfo] = useState([]);
   const [launches, setLaunches] = useState([]);
-  const ref = useRef();
-
-  const fetchMissionData = async () => {
-    try {
-      const missionResponse = await fetch(
-        `https://api.spacexdata.com/v3/missions/`
-      );
-      const missionResponseJSON = await missionResponse.json();
-      setMissions(missionResponseJSON);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const fetchLaunchPadInfo = async () => {
+  
+   const fetchLaunchPadInfo = async () => {
     try {
       const launchPadResponse = await fetch(
         "https://api.spacexdata.com/v3/launchpads"
@@ -56,46 +37,42 @@ export default function AccordionListItem({ title, children }) {
   };
 
   useEffect(() => {
-    fetchMissionData();
-    fetchLaunchPadInfo();
+      fetchLaunchPadInfo();
     fetchLaunchs();
   }, []);
 
-  console.log("MISSIONs are: ", missions);
-  console.log("launch pads are", launchPadInfo);
-  console.log("launches are", launches);
-
   return (
     <Transitioning.View
-      ref={ref}
-      transition={transitionObj}
+      // transition={transitionObj}
       style={styles.bodyContainer}
     >
-      {missions.map((mission, index) => {
+      {launches.map((mission, index) => {
+        console.log({ mission }, { index });
         return (
           <TouchableOpacity
-            key={mission.mission_id}
+            key={mission.launch_date_unix}
             onPress={() => {
-              // this is problematic-  old way of calling the next transition
-              // look at docs for better examples
-              //  https://docs.swmansion.com/react-native-reanimated/docs/animations
-              ref.current.animateNextTransition();
-              setCurrentMissionId(mission.mission_id);
+              setCurrentMissionId(mission.launch_date_unix);
             }}
             style={styles.cardContainer}
             activeOpacity={0.9}
           >
-            <View style={[styles.card, { backgroundColor: "darkblue" }]}>
-              <Text style={[styles.heading, { color: "pink" }]}>
+            <View style={[styles.card, { backgroundColor: "grey" }]}>
+              <Text style={[styles.heading, { color: "White" }]}>
                 {mission.mission_name}
               </Text>
-              {mission.mission_id === currentMissionId && (
+              {mission.launch_date_unix === currentMissionId && (
                 <View style={styles.descriptionList}>
                   <Text
-                    key={"description_" + index}
-                    style={[styles.body, { color: "yellow" }]}
+                    key={"flight_number_" + index}
+                    style={[styles.body, { color: "White" }]}
                   >
-                    {mission.description}
+                    <p>Flight Start: {mission.launch_date_local}</p>
+                    <p>Flight End: convert {mission.launch_date_local} to unix time + flightduration convert back to human readable time </p>
+                    <p>Launch Site: {mission.launch_site.site_name}</p>
+                    <p>{mission.launch_success ? "This mission was a Success!" : "The mission failed for this reason: " + mission.launch_failure_details.reason}</p>
+                    <p>Launch Site Lattitude: Insert code with a call to the launch sites that matches the launch site from the launches with the lauch site Lat and Long</p>
+                    <p>Launch Site Longitude: Same as above</p>
                   </Text>
                 </View>
               )}
@@ -125,7 +102,6 @@ const styles = StyleSheet.create({
   descriptionList: {
     fontSize: 20,
     fontWeight: "500",
-    textTransform: "lowercase",
     letterSpacing: 0,
   },
   body: {
