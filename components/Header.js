@@ -14,10 +14,11 @@ const styles = StyleSheet.create({
     height: 60,
     padding: 15,
     backgroundColor: "grey",
+    textTransform:"uppercase"
   
   },
   text: {
-    color: "#fff",
+    color: "White",
     fontSize: 23,
     textAlign: "center"
   },
