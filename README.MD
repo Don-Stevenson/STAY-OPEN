@@ -11,3 +11,7 @@
    - Mission Name
    - Site launched from with location lat, long and name
    - If mission was a success or failure with reason
+
+## To run:
+
+- fork and clone my repo.  Use yarn start to launch and chose the web emulator
